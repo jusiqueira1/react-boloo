@@ -1,70 +1,75 @@
-# Getting Started with Create React App
+ # Lista de Receitas de Bolo
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Este projeto é um simples aplicativo React para gerenciar uma lista de receitas de bolo. O aplicativo permite adicionar novas receitas e desfazer a última adição.
 
-## Available Scripts
+## Estrutura do Projeto
 
-In the project directory, you can run:
+### src/components/Lista.js
 
-### `npm start`
+```javascript
+import React, { useState, useCallback } from 'react';
+import '../App.css';
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+// Esse função importa o arquivo APP para pegar o Css , assim como o uso do useState e useCallback
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+// Array inicial de receitas, onde consta os ids com receitas de bolos em específico 
+const initialRecipes = [
+  { id: 1, text: 'Bolo de Cenoura' },
+  { id: 2, text: 'Bolo de Chocolate' },
+  { id: 3, text: 'Bolo de Banana' },
+];
 
-### `npm test`
+const TodoList = () => {
+  const [recipes, setRecipes] = useState(initialRecipes); // Estado para armazenar as receitas
+  const [newRecipe, setNewRecipe] = useState(''); // Estado para armazenar a nova receita
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+  // Função para adicionar uma nova receita
+  const addRecipe = useCallback(() => {
+    if (newRecipe.trim() !== '') {
+      const newRecipeItem = {
+        id: recipes.length + 1, // Atribui um ID único
+        text: newRecipe,
+      };
+      setRecipes((prevRecipes) => [...prevRecipes, newRecipeItem]);
+      setNewRecipe('');
+    }
+  }, [newRecipe, recipes]);
 
-### `npm run build`
+  // Função para adicionar uma nova receita ao pressionar "Enter"
+  const handleKeyPress = useCallback((event) => {
+    if (event.key === 'Enter') {
+      addRecipe();
+    }
+  }, [addRecipe]);
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+  // Função para desfazer a última adição
+  const handleUndo = useCallback(() => {
+    if (recipes.length > 0) {
+      setRecipes((prevRecipes) => prevRecipes.slice(0, -1));
+    }
+  }, [recipes]);
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+  return (
+    <div className="todo-list">
+      <h1>Receitas de Bolo</h1>
+      <input
+        type="text"
+        value={newRecipe}
+        onChange={(e) => setNewRecipe(e.target.value)}
+        onKeyPress={handleKeyPress}
+        placeholder="Digite um sabor de bolo"
+      />
+      <button onClick={addRecipe}>Adicionar</button>
+      <button onClick={handleUndo} disabled={recipes.length === 0}>
+        Desfazer
+      </button>
+      <ul>
+        {recipes.map((recipe) => (
+          <li key={recipe.id}>{recipe.text}</li>
+        ))}
+      </ul>
+    </div>
+  );
+};
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+export default TodoList;
