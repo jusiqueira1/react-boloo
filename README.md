@@ -1,33 +1,73 @@
  # Lista de Receitas de Bolo
+```
+O tema escolhido para utilizar na aplicabilidade foram as Listas de Receitas Culinárias, permitindo ao usuário salvar, editar e excluir itens de receitas culinárias em uma lista própria.
 
-Este projeto é um simples aplicativo React para gerenciar uma lista de receitas de bolo. O aplicativo permite adicionar novas receitas e desfazer a última adição.
+As receitas Culinárias são variadas, e já aparecem automaticamente logo que se inicia na aplicação.
 
-## Estrutura do Projeto
+```
+# Estrutura do Projeto
 
-### src/components/Lista.js
+## Tecnologias usadas:
 
-```javascript
-import React, { useState, useCallback } from 'react';
-import '../App.css';
+```
+CSS
+```
+```
+ReactJs
+```
 
-// Esse função importa o arquivo APP para pegar o Css , assim como o uso do useState e useCallback
+## Hooks Utilizados:
+ ```
+ useEffect ,useState e useCallback, no qual permitem alternar os dados para adicionar, editar e excluir diferentes receitas culinárias;
 
-// Array inicial de receitas, onde consta os ids com receitas de bolos em específico 
+ ```
+
+## Instalação e Uso:
+
+```
+1. mkdir PaginaInicial
+
+2. cd PaginaInicial
+
+3. npx create-react-app minhapaginainicial
+
+4. code .
+
+5. npm start
+
+```
+
+## Componente - Lista.jsx
+
+
+# Funcionalidades principais
+
+#### Array : O array consta as informações das receitas dos alimentos em específico, com uso dos ids e identificando serem textos.
+
+```
 const initialRecipes = [
   { id: 1, text: 'Bolo de Cenoura' },
-  { id: 2, text: 'Bolo de Chocolate' },
-  { id: 3, text: 'Bolo de Banana' },
+  { id: 2, text: 'Lasanha de Carne' },
+  { id: 3, text: 'Pizza de Frango' },
 ];
 
-const TodoList = () => {
-  const [recipes, setRecipes] = useState(initialRecipes); // Estado para armazenar as receitas
-  const [newRecipe, setNewRecipe] = useState(''); // Estado para armazenar a nova receita
+```
 
-  // Função para adicionar uma nova receita
-  const addRecipe = useCallback(() => {
+#### useState : Usado para usar o estado de armazenamento das receitas criadas  , alternando entre os dados .
+
+```
+const TodoList = () => {
+  const [recipes, setRecipes] = useState(initialRecipes); 
+  const [newRecipe, setNewRecipe] = useState(''); 
+
+```
+
+addRecipe: Função que adiciona uma nova receita assim que a função for chamada, atirbuindo um ID único sempre que uma receita é gerada, somando + 1.
+```
+const addRecipe = useCallback(() => {
     if (newRecipe.trim() !== '') {
       const newRecipeItem = {
-        id: recipes.length + 1, // Atribui um ID único
+        id: recipes.length + 1, 
         text: newRecipe,
       };
       setRecipes((prevRecipes) => [...prevRecipes, newRecipeItem]);
@@ -35,41 +75,62 @@ const TodoList = () => {
     }
   }, [newRecipe, recipes]);
 
-  // Função para adicionar uma nova receita ao pressionar "Enter"
+
+```
+
+### handleKeyPress : 
+Função que ao ser preenchido o campo de informações, ele adicionará a receita ao clicar no botão "Enter"
+
+```
+
   const handleKeyPress = useCallback((event) => {
     if (event.key === 'Enter') {
       addRecipe();
     }
   }, [addRecipe]);
 
-  // Função para desfazer a última adição
+```
+### handleUndo: 
+Função desfazer a última edição
+
+```
   const handleUndo = useCallback(() => {
     if (recipes.length > 0) {
       setRecipes((prevRecipes) => prevRecipes.slice(0, -1));
     }
   }, [recipes]);
 
-  return (
-    <div className="todo-list">
-      <h1>Receitas de Bolo</h1>
-      <input
-        type="text"
-        value={newRecipe}
-        onChange={(e) => setNewRecipe(e.target.value)}
-        onKeyPress={handleKeyPress}
-        placeholder="Digite um sabor de bolo"
-      />
-      <button onClick={addRecipe}>Adicionar</button>
-      <button onClick={handleUndo} disabled={recipes.length === 0}>
-        Desfazer
-      </button>
-      <ul>
-        {recipes.map((recipe) => (
-          <li key={recipe.id}>{recipe.text}</li>
-        ))}
-      </ul>
-    </div>
-  );
-};
+```
 
-export default TodoList;
+
+## Componente Editar.jsx
+
+#### Esse componente trabalha na edição dos dados já existentes e colocados no campo de input
+
+
+### useEfect: Sendo uma hook, o useEffect atualiza os dados já colocados no currentRecipe, salvando ou cancelar após.
+
+```
+
+const Editar = ({ currentRecipe, onSave, onCancel }) => {
+  const [text, setText] = useState('');
+
+  useEffect(() => {
+    if (currentRecipe) {
+      setText(currentRecipe.text);
+    }
+  }, [currentRecipe]);
+```
+
+
+### handleSave : Função de salvar as informações colocadas no campo de input, pegando pelo ID.
+
+
+```
+  const handleSave = () => {
+    if (text.trim() !== '') {
+      onSave(currentRecipe.id, text);
+    }
+  };
+```
+
